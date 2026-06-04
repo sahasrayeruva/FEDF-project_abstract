@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SmartSense — Hotel Bar & Minibar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#C9A84C;--gold-light:#E8D08A;--gold-pale:#FAF3DC;
+  --navy:#080F1A;--navy-mid:#111D2E;--navy-soft:#192638;--navy-card:#1E2F44;
+  --cream:#FAF6EE;--cream-warm:#F2EAD8;
+  --text-dark:#080F1A;--text-muted:#6A7A8A;--white:#fff;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Outfit',sans-serif;background:var(--navy);color:var(--white);line-height:1.65;overflow-x:hidden}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--navy)}
+::-webkit-scrollbar-thumb{background:var(--gold);border-radius:3px}
+
+/* ── PAGE SYSTEM ── */
+.page{display:none}
+.page.active{display:block}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 6%;height:72px;
+  background:rgba(8,15,26,0.9);backdrop-filter:blur(18px);
+  border-bottom:1px solid rgba(201,168,76,0.14);
+  transition:background 0.3s;
+}
+.logo{font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:700;color:var(--gold);letter-spacing:0.04em;display:flex;align-items:center;gap:10px;cursor:pointer}
+.logo-spark{width:8px;height:8px;border-radius:50%;background:var(--gold);animation:pulse 2s infinite;flex-shrink:0}
+.logo span{color:rgba(255,255,255,0.8);font-weight:300}
+.nav-links{display:flex;gap:2rem;list-style:none;align-items:center}
+.nav-links a{color:rgba(255,255,255,0.6);text-decoration:none;font-size:0.875rem;font-weight:400;letter-spacing:0.04em;transition:color 0.2s;position:relative;cursor:pointer}
+.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;right:0;height:1px;background:var(--gold);transform:scaleX(0);transition:transform 0.25s}
+.nav-links a:hover{color:var(--gold)}
+.nav-links a:hover::after{transform:scaleX(1)}
+.nav-cta{background:var(--gold)!important;color:var(--navy)!important;padding:0.48rem 1.4rem;border-radius:7px;font-weight:600!important}
+.nav-cta::after{display:none!important}
+.nav-cta:hover{background:var(--gold-light)!important}
+.nav-active{color:var(--gold)!important}
+.nav-active::after{transform:scaleX(1)!important}
+
+/* Cart button */
+.cart-btn{
+  display:flex;align-items:center;gap:8px;
+  background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.3);
+  color:var(--gold);padding:0.42rem 1.1rem;border-radius:7px;font-size:.82rem;font-weight:600;
+  cursor:pointer;transition:background .2s;position:relative;
+}
+.cart-btn:hover{background:rgba(201,168,76,.22)}
+.cart-count{
+  background:var(--gold);color:var(--navy);width:18px;height:18px;border-radius:50%;
+  font-size:.65rem;font-weight:700;display:flex;align-items:center;justify-content:center;
+}
+
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.8)}}
+
+/* ── HERO ── */
+.hero{min-height:100vh;position:relative;display:flex;align-items:center;overflow:hidden}
+.hero-bg{
+  position:absolute;inset:0;
+  background-image:url('https://images.unsplash.com/photo-1470337458703-46ad1756a187?auto=format&fit=crop&w=1920&q=85');
+  background-size:cover;background-position:center;
+  filter:brightness(0.22) saturate(1.3);
+  transform:scale(1.06);transition:transform 7s ease;
+}
+.hero-bg.on{transform:scale(1)}
+.hero-ov{position:absolute;inset:0;background:linear-gradient(130deg,rgba(8,15,26,0.96) 42%,rgba(18,34,55,0.72) 100%)}
+.particles{position:absolute;inset:0;pointer-events:none}
+.p{position:absolute;width:2px;height:2px;border-radius:50%;background:var(--gold);animation:drift linear infinite}
+@keyframes drift{0%{transform:translateY(100vh);opacity:0}10%{opacity:.55}90%{opacity:.2}100%{transform:translateY(-30px);opacity:0}}
+
+.hero-inner{
+  position:relative;z-index:2;max-width:1240px;margin:0 auto;width:100%;
+  padding:130px 6% 90px;
+  display:grid;grid-template-columns:1.1fr 1fr;gap:4.5rem;align-items:center;
+}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:10px;
+  background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.28);
+  color:var(--gold);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;
+  padding:.4rem 1.1rem;border-radius:100px;margin-bottom:1.75rem;
+}
+.eyebrow-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:pulse 1.5s infinite}
+h1{font-family:'Cormorant Garamond',serif;font-size:clamp(2.8rem,4.5vw,4.4rem);font-weight:700;line-height:1.08;color:var(--white);margin-bottom:1.5rem}
+h1 em{font-style:italic;color:var(--gold)}
+.hero-p{font-size:1.05rem;color:rgba(255,255,255,.52);font-weight:300;line-height:1.85;margin-bottom:2.5rem;max-width:500px}
+.hero-btns{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:3rem}
+.btn-gold{background:var(--gold);color:var(--navy);padding:.88rem 2.2rem;border-radius:8px;font-weight:600;font-size:.9rem;text-decoration:none;transition:background .2s,transform .15s,box-shadow .2s;display:inline-block;cursor:pointer;border:none}
+.btn-gold:hover{background:var(--gold-light);transform:translateY(-2px);box-shadow:0 8px 28px rgba(201,168,76,.35)}
+.btn-ghost{border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.72);padding:.88rem 2.2rem;border-radius:8px;font-size:.9rem;text-decoration:none;transition:border-color .2s,color .2s;display:inline-block;cursor:pointer;background:none}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold)}
+.trust-row{display:flex;align-items:center;gap:1.25rem}
+.trust-div{width:1px;height:22px;background:rgba(255,255,255,.12)}
+.tn{font-family:'Cormorant Garamond',serif;font-size:1.15rem;color:var(--gold);font-weight:600}
+.td{font-size:.72rem;color:rgba(255,255,255,.38)}
+
+/* DASHBOARD CARD */
+.hero-visual{position:relative}
+.dash-card{background:rgba(18,30,48,.93);backdrop-filter:blur(20px);border:1px solid rgba(201,168,76,.18);border-radius:20px;padding:1.6rem;animation:float 4s ease-in-out infinite alternate;box-shadow:0 24px 80px rgba(0,0,0,.6)}
+@keyframes float{from{transform:translateY(0)}to{transform:translateY(-12px)}}
+.dash-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.4rem}
+.dash-lbl{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);font-weight:600}
+.live-chip{display:flex;align-items:center;gap:6px;background:rgba(93,202,165,.1);border:1px solid rgba(93,202,165,.25);border-radius:100px;padding:.2rem .75rem;font-size:.68rem;color:#5DCAA5}
+.blink{width:6px;height:6px;border-radius:50%;background:#5DCAA5;animation:pulse 1.2s infinite}
+.kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:.65rem;margin-bottom:1.2rem}
+.kpi{background:rgba(255,255,255,.04);border:1px solid rgba(201,168,76,.1);border-radius:10px;padding:.8rem;text-align:center}
+.kn{font-family:'Cormorant Garamond',serif;font-size:1.65rem;color:var(--white);font-weight:700;display:block}
+.kl{font-size:.63rem;color:rgba(255,255,255,.37);letter-spacing:.06em;text-transform:uppercase}
+.rooms{display:flex;flex-direction:column;gap:.55rem}
+.room-r{display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.03);border-radius:9px;padding:.58rem .85rem;border:1px solid rgba(255,255,255,.05)}
+.rn{font-size:.83rem;color:var(--white);font-weight:500}
+.rt{font-size:.67rem;color:rgba(255,255,255,.37)}
+.bdg{font-size:.64rem;padding:.22rem .75rem;border-radius:100px;font-weight:500}
+.ok{background:rgba(93,202,165,.18);color:#5DCAA5;border:1px solid rgba(93,202,165,.25)}
+.pend{background:rgba(201,168,76,.18);color:var(--gold);border:1px solid rgba(201,168,76,.25)}
+.low{background:rgba(216,90,48,.18);color:#F0997B;border:1px solid rgba(216,90,48,.25)}
+.fb{position:absolute;background:rgba(18,30,48,.95);backdrop-filter:blur(12px);border:1px solid rgba(201,168,76,.2);border-radius:12px;padding:.65rem 1rem;font-size:.75rem;color:var(--white);white-space:nowrap;box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.fb1{top:-22px;right:-28px;animation:float2 3.5s ease-in-out infinite alternate}
+.fb2{bottom:-12px;left:-28px;animation:float2 4.2s ease-in-out infinite alternate-reverse}
+@keyframes float2{from{transform:translateY(0)}to{transform:translateY(-8px)}}
+.fb-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;vertical-align:middle}
+
+/* ── STATS ── */
+.stats{padding:5rem 6%;background:var(--navy)}
+.stats-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);border:1px solid rgba(201,168,76,.14);border-radius:20px;overflow:hidden}
+.stat-it{padding:2.2rem 1.5rem;text-align:center;border-right:1px solid rgba(201,168,76,.1);transition:background .3s}
+.stat-it:hover{background:rgba(201,168,76,.04)}
+.stat-it:last-child{border-right:none}
+.sn{font-family:'Cormorant Garamond',serif;font-size:2.8rem;color:var(--gold);font-weight:700;display:block;margin-bottom:.3rem}
+.sd{font-size:.8rem;color:rgba(255,255,255,.38);letter-spacing:.04em}
+
+/* ── FEATURES ── */
+.features{padding:8rem 6%;background:var(--cream)}
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem;max-width:1100px;margin:0 auto}
+.feat-card{background:var(--white);border:1px solid rgba(8,15,26,.07);border-radius:18px;padding:2.2rem 1.9rem;transition:transform .3s,box-shadow .3s;position:relative;overflow:hidden}
+.feat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--gold-light));transform:scaleX(0);transform-origin:left;transition:transform .35s}
+.feat-card:hover{transform:translateY(-6px);box-shadow:0 20px 60px rgba(8,15,26,.12)}
+.feat-card:hover::before{transform:scaleX(1)}
+.feat-ico{width:52px;height:52px;background:var(--gold-pale);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:1.4rem}
+.feat-t{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:600;color:var(--text-dark);margin-bottom:.65rem}
+.feat-d{font-size:.87rem;color:var(--text-muted);line-height:1.8;font-weight:300}
+.features .sec-t{color:var(--text-dark)}
+.features .sec-s{color:var(--text-muted)}
+
+/* ── HOW IT WORKS ── */
+.how{padding:8rem 6%;background:var(--navy);position:relative;overflow:hidden}
+.how-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:900px;height:500px;background:radial-gradient(ellipse,rgba(201,168,76,.06) 0%,transparent 65%);pointer-events:none}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;max-width:1100px;margin:0 auto;position:relative;z-index:1}
+.steps::before{content:'';position:absolute;top:42px;left:12%;right:12%;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,.3),transparent)}
+.step{text-align:center;padding:2rem 1rem}
+.step-c{width:56px;height:56px;border:1.5px solid var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.4rem;font-family:'Cormorant Garamond',serif;font-size:1.3rem;color:var(--gold);font-weight:700;background:rgba(201,168,76,.07);position:relative;z-index:1;transition:background .3s}
+.step:hover .step-c{background:rgba(201,168,76,.18)}
+.step-t{font-size:.95rem;font-weight:600;color:var(--white);margin-bottom:.55rem}
+.step-d{font-size:.82rem;color:rgba(255,255,255,.38);line-height:1.75;font-weight:300}
+
+/* ── QUOTE STRIP ── */
+.strip{height:380px;position:relative;overflow:hidden}
+.strip-img-wrap{width:100%;height:100%;position:relative}
+.strip-img-wrap::before{content:'';position:absolute;inset:0;background:var(--navy-soft);z-index:1;transition:opacity 0.6s}
+.strip-img-wrap.loaded::before{opacity:0}
+.strip img{width:100%;height:100%;object-fit:cover;filter:brightness(.28) saturate(1.3);display:block;opacity:0;transition:opacity 0.6s}
+.strip img.visible{opacity:1}
+.strip-ov{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem;z-index:2}
+.strip-q{font-family:'Cormorant Garamond',serif;font-size:clamp(1.6rem,3vw,2.6rem);font-style:italic;color:var(--white);max-width:700px;line-height:1.4;margin-bottom:1rem}
+.strip-q em{color:var(--gold)}
+.strip-a{font-size:.78rem;color:rgba(255,255,255,.38);letter-spacing:.1em;text-transform:uppercase}
+
+/* ── FOOTER ── */
+footer{background:var(--navy);padding:4rem 6% 2.5rem;border-top:1px solid rgba(201,168,76,.12)}
+.ft{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:3rem;margin-bottom:3rem}
+.f-logo{font-family:'Cormorant Garamond',serif;font-size:1.7rem;color:var(--gold);font-weight:700;margin-bottom:.75rem}
+.f-logo span{color:rgba(255,255,255,.7);font-weight:300}
+.f-tag{font-size:.83rem;color:rgba(255,255,255,.32);font-weight:300;line-height:1.75;max-width:260px}
+.f-hd{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:1rem}
+.f-ul{list-style:none;display:flex;flex-direction:column;gap:.6rem}
+.f-ul a{color:rgba(255,255,255,.38);font-size:.83rem;text-decoration:none;transition:color .2s;cursor:pointer}
+.f-ul a:hover{color:var(--gold)}
+.fb-row{padding-top:2rem;border-top:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:space-between;font-size:.78rem;color:rgba(255,255,255,.22)}
+.gold{color:var(--gold)}
+
+/* ── REVEAL ── */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.d1{transition-delay:.12s}.d2{transition-delay:.22s}.d3{transition-delay:.32s}.d4{transition-delay:.42s}
+
+/* ═══════════════════════════════════════
+   BAR PAGE STYLES
+═══════════════════════════════════════ */
+.bar-hero{
+  min-height:60vh;position:relative;display:flex;align-items:center;
+  background-image:url('https://images.unsplash.com/photo-1543007631-283050bb3e8c?auto=format&fit=crop&w=1920&q=85');
+  background-size:cover;background-position:center;
+  overflow:hidden;
+}
+.bar-hero-ov{position:absolute;inset:0;background:linear-gradient(135deg,rgba(8,15,26,.95) 40%,rgba(8,15,26,.7))}
+.bar-hero-inner{position:relative;z-index:2;max-width:1240px;margin:0 auto;width:100%;padding:120px 6% 60px}
+.bar-hero-inner h1{font-family:'Cormorant Garamond',serif;font-size:clamp(2.8rem,5vw,4.8rem);font-weight:700;color:var(--white);line-height:1.05;margin-bottom:1rem}
+.bar-hero-inner h1 em{color:var(--gold);font-style:italic}
+.bar-hero-inner p{font-size:1.05rem;color:rgba(255,255,255,.5);font-weight:300;max-width:520px;line-height:1.85}
+
+/* Category filter tabs */
+.bar-filter{padding:2rem 6%;background:var(--navy-mid);border-bottom:1px solid rgba(201,168,76,.1);position:sticky;top:72px;z-index:100}
+.filter-row{display:flex;gap:.7rem;max-width:1240px;margin:0 auto;flex-wrap:wrap}
+.filter-tab{
+  padding:.5rem 1.3rem;border-radius:100px;font-size:.82rem;font-weight:500;cursor:pointer;
+  border:1px solid rgba(201,168,76,.2);color:rgba(255,255,255,.5);background:transparent;
+  transition:all .2s;white-space:nowrap;
+}
+.filter-tab:hover{border-color:var(--gold);color:var(--gold)}
+.filter-tab.active{background:var(--gold);color:var(--navy);border-color:var(--gold);font-weight:600}
+
+/* Drinks grid */
+.bar-menu{padding:4rem 6%;background:var(--navy)}
+.drinks-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.4rem;max-width:1240px;margin:0 auto}
+.drink-card{
+  background:var(--navy-card);border:1px solid rgba(201,168,76,.12);border-radius:18px;overflow:hidden;
+  transition:transform .3s,box-shadow .3s,border-color .3s;cursor:pointer;
+}
+.drink-card:hover{transform:translateY(-6px);box-shadow:0 20px 60px rgba(0,0,0,.5);border-color:rgba(201,168,76,.35)}
+.drink-img{width:100%;height:200px;object-fit:cover;display:block;transition:transform .5s}
+.drink-card:hover .drink-img{transform:scale(1.05)}
+.drink-info{padding:1.3rem 1.4rem}
+.drink-cat{font-size:.65rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:.4rem}
+.drink-name{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:700;color:var(--white);margin-bottom:.4rem}
+.drink-desc{font-size:.8rem;color:rgba(255,255,255,.38);line-height:1.7;font-weight:300;margin-bottom:1.1rem}
+.drink-footer{display:flex;align-items:center;justify-content:space-between}
+.drink-price{font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--gold);font-weight:700}
+.add-btn{
+  background:var(--gold);color:var(--navy);border:none;padding:.48rem 1.1rem;border-radius:8px;
+  font-size:.82rem;font-weight:600;cursor:pointer;transition:background .2s,transform .15s;
+}
+.add-btn:hover{background:var(--gold-light);transform:scale(1.05)}
+.add-btn:active{transform:scale(.97)}
+
+/* ── CART PANEL ── */
+.cart-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:300;
+  opacity:0;pointer-events:none;transition:opacity .3s;
+}
+.cart-overlay.open{opacity:1;pointer-events:all}
+.cart-panel{
+  position:fixed;top:0;right:0;bottom:0;width:420px;max-width:95vw;
+  background:var(--navy-mid);border-left:1px solid rgba(201,168,76,.18);
+  z-index:301;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);
+  display:flex;flex-direction:column;
+}
+.cart-panel.open{transform:translateX(0)}
+.cart-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.4rem 1.6rem;border-bottom:1px solid rgba(201,168,76,.12);flex-shrink:0;
+}
+.cart-head h3{font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--white);font-weight:700}
+.cart-close{background:none;border:none;color:rgba(255,255,255,.5);font-size:1.4rem;cursor:pointer;padding:.2rem}
+.cart-close:hover{color:var(--gold)}
+.cart-items{flex:1;overflow-y:auto;padding:1.2rem 1.6rem;display:flex;flex-direction:column;gap:.9rem}
+.cart-empty{text-align:center;padding:4rem 1rem;color:rgba(255,255,255,.3);font-size:.9rem}
+.cart-empty span{display:block;font-size:2.5rem;margin-bottom:.8rem;opacity:.4}
+.cart-item{
+  display:flex;align-items:center;gap:1rem;
+  background:rgba(255,255,255,.04);border:1px solid rgba(201,168,76,.1);border-radius:12px;padding:.9rem;
+}
+.ci-img{width:56px;height:56px;border-radius:8px;object-fit:cover;flex-shrink:0}
+.ci-info{flex:1;min-width:0}
+.ci-name{font-size:.9rem;font-weight:600;color:var(--white);margin-bottom:.2rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ci-price{font-size:.82rem;color:var(--gold);font-weight:600}
+.ci-qty{display:flex;align-items:center;gap:.5rem;margin-top:.4rem}
+.qty-btn{
+  width:24px;height:24px;border-radius:50%;background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.2);
+  color:var(--gold);font-size:.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;
+}
+.qty-btn:hover{background:rgba(201,168,76,.3)}
+.qty-val{font-size:.85rem;font-weight:600;color:var(--white);min-width:18px;text-align:center}
+.ci-remove{background:none;border:none;color:rgba(255,255,255,.2);cursor:pointer;font-size:1rem;padding:.2rem;transition:color .2s}
+.ci-remove:hover{color:#F0997B}
+.cart-foot{
+  padding:1.4rem 1.6rem;border-top:1px solid rgba(201,168,76,.12);flex-shrink:0;
+}
+.cart-total{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
+.ct-label{font-size:.82rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.06em}
+.ct-val{font-family:'Cormorant Garamond',serif;font-size:1.6rem;color:var(--gold);font-weight:700}
+.checkout-btn{
+  width:100%;background:var(--gold);color:var(--navy);border:none;padding:1rem;border-radius:10px;
+  font-size:1rem;font-weight:700;cursor:pointer;transition:background .2s,transform .15s;letter-spacing:.02em;
+}
+.checkout-btn:hover{background:var(--gold-light);transform:translateY(-2px)}
+
+/* ── BILLING PAGE ── */
+.billing-page{min-height:100vh;background:var(--navy);padding:100px 6% 4rem}
+.billing-inner{max-width:920px;margin:0 auto}
+.billing-inner h2{font-family:'Cormorant Garamond',serif;font-size:2.8rem;font-weight:700;color:var(--white);margin-bottom:.5rem}
+.billing-inner h2 em{color:var(--gold);font-style:italic}
+.billing-inner>p{color:rgba(255,255,255,.4);font-size:.9rem;margin-bottom:2.5rem}
+.billing-layout{display:grid;grid-template-columns:1fr 380px;gap:2rem}
+.billing-form-wrap{background:var(--navy-card);border:1px solid rgba(201,168,76,.12);border-radius:20px;padding:2rem}
+.billing-form-wrap h3{font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--white);margin-bottom:1.5rem}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+.form-group{display:flex;flex-direction:column;gap:.45rem;margin-bottom:1rem}
+.form-group label{font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);font-weight:600}
+.form-group input,.form-group select{
+  background:rgba(255,255,255,.05);border:1px solid rgba(201,168,76,.18);border-radius:9px;
+  padding:.75rem 1rem;color:var(--white);font-family:'Outfit',sans-serif;font-size:.9rem;outline:none;
+  transition:border-color .2s;
+}
+.form-group input:focus,.form-group select:focus{border-color:var(--gold)}
+.form-group input::placeholder{color:rgba(255,255,255,.22)}
+.form-group select option{background:var(--navy-mid)}
+.pay-methods{display:grid;grid-template-columns:repeat(3,1fr);gap:.7rem;margin:1.2rem 0}
+.pay-m{
+  border:1px solid rgba(201,168,76,.18);border-radius:10px;padding:.85rem .7rem;text-align:center;
+  cursor:pointer;transition:all .2s;color:rgba(255,255,255,.5);font-size:.82rem;font-weight:500;background:transparent;
+}
+.pay-m:hover{border-color:var(--gold);color:var(--gold)}
+.pay-m.selected{background:rgba(201,168,76,.12);border-color:var(--gold);color:var(--gold)}
+.pay-m span{display:block;font-size:1.4rem;margin-bottom:.3rem}
+.place-order-btn{
+  width:100%;background:var(--gold);color:var(--navy);border:none;padding:1.1rem;border-radius:12px;
+  font-size:1.05rem;font-weight:700;cursor:pointer;transition:background .2s,transform .15s;margin-top:1.2rem;letter-spacing:.02em;
+}
+.place-order-btn:hover{background:var(--gold-light);transform:translateY(-2px)}
+.order-summary{background:var(--navy-card);border:1px solid rgba(201,168,76,.12);border-radius:20px;padding:1.6rem;height:fit-content;position:sticky;top:90px}
+.order-summary h3{font-family:'Cormorant Garamond',serif;font-size:1.3rem;color:var(--white);margin-bottom:1.2rem;padding-bottom:.8rem;border-bottom:1px solid rgba(255,255,255,.07)}
+.summary-item{display:flex;align-items:center;gap:.9rem;padding:.7rem 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.si-img{width:44px;height:44px;border-radius:7px;object-fit:cover}
+.si-info{flex:1;min-width:0}
+.si-name{font-size:.85rem;color:var(--white);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.si-qty{font-size:.75rem;color:rgba(255,255,255,.35);margin-top:.1rem}
+.si-price{font-size:.9rem;color:var(--gold);font-weight:600;flex-shrink:0}
+.summary-totals{margin-top:1.1rem;display:flex;flex-direction:column;gap:.55rem}
+.strow{display:flex;justify-content:space-between;font-size:.85rem;color:rgba(255,255,255,.45)}
+.strow.total{font-size:1.1rem;font-weight:700;color:var(--white);border-top:1px solid rgba(201,168,76,.15);padding-top:.75rem;margin-top:.3rem}
+.strow.total span:last-child{color:var(--gold);font-family:'Cormorant Garamond',serif;font-size:1.3rem}
+.order-success{display:none;text-align:center;padding:4rem 2rem}
+.order-success.show{display:block}
+.success-icon{font-size:4rem;margin-bottom:1rem;animation:popIn .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes popIn{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+.order-success h2{font-family:'Cormorant Garamond',serif;font-size:2.2rem;color:var(--gold);margin-bottom:.6rem}
+.order-success p{color:rgba(255,255,255,.5);font-size:.95rem;margin-bottom:2rem}
+
+/* ═══════════════════════════════════════
+   MINIBAR PAGE STYLES
+═══════════════════════════════════════ */
+.minibar-hero{
+  min-height:55vh;position:relative;display:flex;align-items:center;
+  background-image:url('https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=1920&q=85');
+  background-size:cover;background-position:center;
+}
+.minibar-hero-ov{position:absolute;inset:0;background:linear-gradient(135deg,rgba(8,15,26,.97) 40%,rgba(8,15,26,.65))}
+.minibar-hero-inner{position:relative;z-index:2;max-width:1240px;margin:0 auto;width:100%;padding:110px 6% 60px}
+.minibar-hero-inner .eyebrow{margin-bottom:1.2rem}
+.minibar-hero-inner h1{font-family:'Cormorant Garamond',serif;font-size:clamp(2.6rem,5vw,4.5rem);font-weight:700;color:var(--white);line-height:1.05;margin-bottom:1rem}
+.minibar-hero-inner h1 em{color:var(--gold);font-style:italic}
+.minibar-hero-inner p{font-size:1rem;color:rgba(255,255,255,.48);font-weight:300;max-width:520px;line-height:1.9}
+
+.minibar-section{padding:5rem 6%;background:var(--navy)}
+.minibar-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.6rem;max-width:1240px;margin:0 auto}
+.mb-card{
+  background:var(--navy-card);border:1px solid rgba(201,168,76,.12);border-radius:18px;overflow:hidden;
+  cursor:pointer;transition:transform .3s,box-shadow .3s,border-color .3s;
+}
+.mb-card:hover{transform:translateY(-8px);box-shadow:0 24px 70px rgba(0,0,0,.6);border-color:rgba(201,168,76,.4)}
+.mb-img-wrap{width:100%;height:220px;overflow:hidden;position:relative}
+.mb-img-wrap img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.mb-card:hover .mb-img-wrap img{transform:scale(1.08)}
+.mb-badge{
+  position:absolute;top:.9rem;left:.9rem;background:rgba(8,15,26,.85);backdrop-filter:blur(8px);
+  border:1px solid rgba(201,168,76,.25);border-radius:100px;padding:.25rem .8rem;
+  font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);font-weight:600;
+}
+.mb-info{padding:1.4rem}
+.mb-name{font-family:'Cormorant Garamond',serif;font-size:1.45rem;font-weight:700;color:var(--white);margin-bottom:.35rem}
+.mb-origin{font-size:.75rem;color:rgba(255,255,255,.35);margin-bottom:.7rem;font-weight:300}
+.mb-tags{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1rem}
+.mb-tag{background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.15);border-radius:100px;padding:.18rem .65rem;font-size:.65rem;color:rgba(255,255,255,.5);font-weight:400}
+.mb-cta{display:flex;align-items:center;gap:.5rem;color:var(--gold);font-size:.8rem;font-weight:600;letter-spacing:.04em}
+.mb-cta svg{transition:transform .2s}
+.mb-card:hover .mb-cta svg{transform:translateX(4px)}
+
+/* ── DRINK HISTORY MODAL ── */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:400;
+  opacity:0;pointer-events:none;transition:opacity .3s;display:flex;align-items:center;justify-content:center;padding:2rem;
+}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal-box{
+  background:var(--navy-mid);border:1px solid rgba(201,168,76,.2);border-radius:24px;
+  max-width:760px;width:100%;max-height:90vh;overflow-y:auto;
+  transform:scale(.92);transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+}
+.modal-overlay.open .modal-box{transform:scale(1)}
+.modal-img{width:100%;height:320px;object-fit:cover;display:block;border-radius:24px 24px 0 0}
+.modal-content{padding:2rem 2.2rem}
+.modal-cat{font-size:.68rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:.5rem}
+.modal-title{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:700;color:var(--white);margin-bottom:.3rem}
+.modal-origin{font-size:.82rem;color:rgba(255,255,255,.35);margin-bottom:1.5rem}
+.modal-section-t{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:600;margin:1.5rem 0 .7rem}
+.modal-history{font-size:.93rem;color:rgba(255,255,255,.58);line-height:1.95;font-weight:300}
+.modal-ingredients{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:.5rem}
+.modal-ing{background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.18);border-radius:100px;padding:.28rem .8rem;font-size:.75rem;color:rgba(255,255,255,.55)}
+.modal-close{
+  position:absolute;top:1.2rem;right:1.2rem;background:rgba(8,15,26,.8);backdrop-filter:blur(8px);
+  border:1px solid rgba(201,168,76,.2);border-radius:50%;width:40px;height:40px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;color:rgba(255,255,255,.6);
+  font-size:1.1rem;transition:color .2s,background .2s;
+}
+.modal-close:hover{color:var(--gold);background:rgba(201,168,76,.12)}
+.modal-header-wrap{position:relative}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1024px){
+  .hero-inner{grid-template-columns:1fr;text-align:center;gap:3rem}
+  .hero-p,.trust-row,.hero-btns{margin-left:auto;margin-right:auto;justify-content:center}
+  .fb1,.fb2{display:none}
+  .feat-grid,.steps{grid-template-columns:1fr 1fr}
+  .stats-inner{grid-template-columns:repeat(2,1fr)}
+  .stat-it{border-right:none;border-bottom:1px solid rgba(201,168,76,.1)}
+  .ft{grid-template-columns:1fr}
+  .fb-row{flex-direction:column;gap:.5rem;text-align:center}
+  nav .nav-links li:not(:last-child){display:none}
+  .billing-layout{grid-template-columns:1fr}
+  .order-summary{position:static}
+}
+@media(max-width:640px){
+  .feat-grid,.steps{grid-template-columns:1fr}
+  .steps::before{display:none}
+  .form-row{grid-template-columns:1fr}
+  .billing-page{padding:100px 4% 3rem}
+}
+
+@keyframes addedFlash{0%{transform:scale(1)}30%{transform:scale(.92)}60%{transform:scale(1.08)}100%{transform:scale(1)}}
+.added{animation:addedFlash .35s ease}
+
+.sec-wrap{max-width:1240px;margin:0 auto;padding:0 6%}
+.sec-lbl{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:.65rem;text-align:center}
+.sec-t{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,3.5vw,3rem);font-weight:700;text-align:center;color:var(--white);margin-bottom:.9rem}
+.sec-s{text-align:center;color:rgba(255,255,255,.42);font-size:.95rem;font-weight:300;max-width:500px;margin:0 auto 3.5rem;line-height:1.8}
+</style>
+</head>
+<body>
+
+<nav id="navbar">
+  <div class="logo" onclick="showPage('home')"><span class="logo-spark"></span>Smart<span>Sense</span></div>
+  <ul class="nav-links" id="navLinks">
+    <li><a onclick="showPage('home')" id="nav-home" class="nav-active">Home</a></li>
+    <li><a onclick="showPage('bar')" id="nav-bar">The Bar</a></li>
+    <li><a onclick="showPage('minibar')" id="nav-minibar">Mini Bar</a></li>
+    <li><div class="cart-btn" onclick="openCart()">🛒 Cart <span class="cart-count" id="cartCount">0</span></div></li>
+  </ul>
+</nav>
+
+<!-- HOME PAGE -->
+<div class="page active" id="page-home">
+<section class="hero">
+  <div class="hero-bg" id="heroBg"></div>
+  <div class="hero-ov"></div>
+  <div class="particles" id="ptcls"></div>
+  <div class="hero-inner">
+    <div>
+      <div class="eyebrow"><span class="eyebrow-dot"></span>Hotel Operations &nbsp;·&nbsp; Minibar Intelligence</div>
+      <h1>Where <em>Luxury</em><br/>Meets Smart<br/>Inventory Control</h1>
+      <p class="hero-p">A centralized digital platform for real-time minibar inventory, consumption tracking, replenishment workflows, and flawless billing — engineered for modern hospitality.</p>
+      <div class="hero-btns">
+        <button class="btn-gold" onclick="showPage('bar')">Visit The Bar</button>
+        <button class="btn-ghost" onclick="showPage('minibar')">Explore Mini Bar</button>
+      </div>
+      <div class="trust-row">
+        <div><div class="tn">99%</div><div class="td">Billing Accuracy</div></div>
+        <div class="trust-div"></div>
+        <div><div class="tn">3×</div><div class="td">Faster Restock</div></div>
+        <div class="trust-div"></div>
+        <div><div class="tn">40%</div><div class="td">Less Wastage</div></div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="fb fb1"><span class="fb-dot" style="background:#5DCAA5"></span>Room 301 — Restocked ✓</div>
+      <div class="dash-card">
+        <div class="dash-top"><span class="dash-lbl">Live Dashboard</span><span class="live-chip"><span class="blink"></span>Live</span></div>
+        <div class="kpi-row">
+          <div class="kpi"><span class="kn">142</span><span class="kl">Rooms</span></div>
+          <div class="kpi"><span class="kn">97%</span><span class="kl">Stocked</span></div>
+          <div class="kpi"><span class="kn">38</span><span class="kl">Orders Today</span></div>
+        </div>
+        <div class="rooms">
+          <div class="room-r"><div><div class="rn">Room 301</div><div class="rt">Deluxe Suite</div></div><span class="bdg ok">Restocked</span></div>
+          <div class="room-r"><div><div class="rn">Room 215</div><div class="rt">Executive Room</div></div><span class="bdg pend">Pending</span></div>
+          <div class="room-r"><div><div class="rn">Room 418</div><div class="rt">Premium Suite</div></div><span class="bdg low">Low Stock</span></div>
+          <div class="room-r"><div><div class="rn">Room 507</div><div class="rt">Presidential</div></div><span class="bdg ok">Restocked</span></div>
+        </div>
+      </div>
+      <div class="fb fb2"><span class="fb-dot" style="background:var(--gold)"></span>Billing synced — ₹18,400</div>
+    </div>
+  </div>
+</section>
+<div class="stats">
+  <div class="stats-inner">
+    <div class="stat-it reveal"><span class="sn">99%</span><span class="sd">Billing Accuracy</span></div>
+    <div class="stat-it reveal d1"><span class="sn">40%</span><span class="sd">Less Wastage</span></div>
+    <div class="stat-it reveal d2"><span class="sn">3×</span><span class="sd">Faster Replenishment</span></div>
+    <div class="stat-it reveal d3"><span class="sn">∞</span><span class="sd">Real-Time Tracking</span></div>
+  </div>
+</div>
+<section class="features" id="features">
+  <p class="sec-lbl reveal">What We Offer</p>
+  <h2 class="sec-t reveal d1">Every Tool to Run a Smarter Bar</h2>
+  <p class="sec-s reveal d2">From minibar logs to admin controls — purpose-built for hospitality efficiency.</p>
+  <div class="feat-grid">
+    <div class="feat-card reveal"><div class="feat-ico">📋</div><div class="feat-t">Minibar Log & Consumption</div><p class="feat-d">Track every item consumed per room with timestamps. Automated forms eliminate manual entry and billing discrepancies.</p></div>
+    <div class="feat-card reveal d1"><div class="feat-ico">🔄</div><div class="feat-t">Replenishment Scheduler</div><p class="feat-d">Live workflow tracker lets housekeeping update room servicing in real time. Managers see pending, complete, and delayed rooms instantly.</p></div>
+    <div class="feat-card reveal d2"><div class="feat-ico">📊</div><div class="feat-t">Inventory Charts & Analytics</div><p class="feat-d">Visual dashboards powered by Chart.js display stock levels, usage patterns, and inventory insights — all at a glance.</p></div>
+    <div class="feat-card reveal"><div class="feat-ico">🔔</div><div class="feat-t">Low Stock Alerts</div><p class="feat-d">Automatic notifications trigger when items fall below threshold. Never let a room go understocked or a billing opportunity slip away.</p></div>
+    <div class="feat-card reveal d1"><div class="feat-ico">🧾</div><div class="feat-t">Billing Reconciliation</div><p class="feat-d">Match consumption records with billing data seamlessly. Breakage records, corrections, and export-ready reports simplify accounting.</p></div>
+    <div class="feat-card reveal d2"><div class="feat-ico">🛡️</div><div class="feat-t">Admin Panel & Authentication</div><p class="feat-d">JWT-secured login with role-based access. Full admin control over staff, inventory data, activity timeline, and configuration.</p></div>
+  </div>
+</section>
+<section class="how" id="how">
+  <div class="how-glow"></div>
+  <p class="sec-lbl reveal">Process Flow</p>
+  <h2 class="sec-t reveal d1">How SmartSense Works</h2>
+  <p class="sec-s reveal d2">Four seamless steps from guest consumption to settled invoice.</p>
+  <div class="steps">
+    <div class="step reveal"><div class="step-c">01</div><div class="step-t">Guest Consumes</div><p class="step-d">Items are taken from the minibar or hotel bar during the guest's stay.</p></div>
+    <div class="step reveal d1"><div class="step-c">02</div><div class="step-t">Staff Logs Entry</div><p class="step-d">Housekeeping logs consumption digitally — timestamped and staff-attributed.</p></div>
+    <div class="step reveal d2"><div class="step-c">03</div><div class="step-t">Inventory Updates</div><p class="step-d">Stock levels adjust automatically. Alerts and replenishment tasks trigger instantly.</p></div>
+    <div class="step reveal d3"><div class="step-c">04</div><div class="step-t">Bill Reconciled</div><p class="step-d">Charges sync to billing. Reports generated and exported for accounting in one click.</p></div>
+  </div>
+</section>
+<div class="strip">
+  <div class="strip-img-wrap" id="stripWrap">
+    <img id="stripImg" data-src="https://images.unsplash.com/photo-1543007631-283050bb3e8c?auto=format&fit=crop&w=1920&q=80" alt="Hotel bar atmosphere" loading="lazy"/>
+  </div>
+  <div class="strip-ov">
+    <p class="strip-q">"Excellence in hospitality begins with <em>knowing exactly</em> what's in every room."</p>
+    <p class="strip-a">— SmartSense Philosophy</p>
+  </div>
+</div>
+<footer>
+  <div class="ft">
+    <div><div class="f-logo">Smart<span>Sense</span></div><p class="f-tag">A smart hospitality platform built to eliminate inventory guesswork and billing friction — one room at a time.</p></div>
+    <div><div class="f-hd">Navigation</div><ul class="f-ul"><li><a onclick="showPage('bar')">The Bar</a></li><li><a onclick="showPage('minibar')">Mini Bar</a></li><li><a onclick="showPage('home')">Home</a></li></ul></div>
+    <div><div class="f-hd">Project Info</div><ul class="f-ul"><li><a href="#">25CS1201E · 2025–26, Term III</a></li><li><a href="#">Section 13</a></li><li><a href="#">Frontend Frameworks & UI Engineering</a></li></ul></div>
+  </div>
+  <div class="fb-row"><div>© 2025 <span class="gold">SmartSense</span> — Smart Hotel Bar & Minibar Management System</div><div>Bhavika Pawar &nbsp;·&nbsp; Sahasra Yeruva</div></div>
+</footer>
+</div>
+
+<!-- BAR PAGE -->
+<div class="page" id="page-bar">
+<section class="bar-hero">
+  <div class="bar-hero-ov"></div>
+  <div class="bar-hero-inner">
+    <div class="eyebrow"><span class="eyebrow-dot"></span>SmartSense · The Bar</div>
+    <h1>Crafted for <em>Connoisseurs</em></h1>
+    <p>An unparalleled selection of cocktails, spirits, wines, and more — poured with precision and served with artistry. Order directly to your table.</p>
+  </div>
+</section>
+<div class="bar-filter">
+  <div class="filter-row" id="filterRow">
+    <button class="filter-tab active" data-cat="all">All Drinks</button>
+    <button class="filter-tab" data-cat="Cocktails">Cocktails</button>
+    <button class="filter-tab" data-cat="Whisky">Whisky</button>
+    <button class="filter-tab" data-cat="Wine">Wine</button>
+    <button class="filter-tab" data-cat="Beer">Beer</button>
+    <button class="filter-tab" data-cat="Non-Alcoholic">Non-Alcoholic</button>
+    <button class="filter-tab" data-cat="Mocktails">Mocktails</button>
+  </div>
+</div>
+<section class="bar-menu"><div class="drinks-grid" id="drinksGrid"></div></section>
+</div>
+
+<!-- BILLING PAGE -->
+<div class="page" id="page-billing">
+<div class="billing-page">
+  <div class="billing-inner">
+    <div class="order-success" id="orderSuccess">
+      <div class="success-icon">🥂</div>
+      <h2>Order Placed!</h2>
+      <p>Your drinks are being prepared. Your order has been synced to your room billing.</p>
+      <button class="btn-gold" onclick="showPage('bar')">Order More Drinks</button>
+    </div>
+    <div id="billingForm">
+      <h2>Complete Your <em>Order</em></h2>
+      <p>Fill in your details below and choose a payment method to confirm.</p>
+      <div class="billing-layout">
+        <div>
+          <div class="billing-form-wrap">
+            <h3>Guest Details</h3>
+            <div class="form-row">
+              <div class="form-group"><label>First Name</label><input type="text" placeholder="Arjun"/></div>
+              <div class="form-group"><label>Last Name</label><input type="text" placeholder="Sharma"/></div>
+            </div>
+            <div class="form-group"><label>Room Number</label><input type="text" placeholder="e.g. 301"/></div>
+            <div class="form-group"><label>Phone Number</label><input type="tel" placeholder="+91 98765 43210"/></div>
+            <div class="form-group"><label>Special Requests</label><input type="text" placeholder="e.g. No ice, extra lime..."/></div>
+            <h3 style="margin-top:1.5rem">Payment Method</h3>
+            <div class="pay-methods" id="payMethods">
+              <button class="pay-m selected" data-method="room"><span>🏨</span>Room Charge</button>
+              <button class="pay-m" data-method="card"><span>💳</span>Card</button>
+              <button class="pay-m" data-method="upi"><span>📲</span>UPI</button>
+            </div>
+            <button class="place-order-btn" onclick="placeOrder()">Confirm & Place Order →</button>
+          </div>
+        </div>
+        <div class="order-summary">
+          <h3>Your Order</h3>
+          <div id="summaryItems"></div>
+          <div class="summary-totals" id="summaryTotals"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- MINIBAR PAGE -->
+<div class="page" id="page-minibar">
+<section class="minibar-hero">
+  <div class="minibar-hero-ov"></div>
+  <div class="minibar-hero-inner">
+    <div class="eyebrow"><span class="eyebrow-dot"></span>SmartSense · Mini Bar</div>
+    <h1>The Art of the <em>Mini Bar</em></h1>
+    <p>Every bottle in your room has a story. Discover the history, heritage, and craftsmanship behind each carefully selected minibar offering. Click any drink to explore its origins.</p>
+  </div>
+</section>
+<div class="bar-filter">
+  <div class="filter-row" id="minibarFilterRow">
+    <button class="filter-tab active" data-mcat="all">All Items</button>
+    <button class="filter-tab" data-mcat="spirits">🥃 Spirits & Liqueurs</button>
+    <button class="filter-tab" data-mcat="soft">🥤 Soft Drinks & Juices</button>
+  </div>
+</div>
+<section class="minibar-section">
+  <p class="sec-lbl">Curated Collection</p>
+  <h2 class="sec-t">Room Bar Selections</h2>
+  <p class="sec-s">Click on any drink to discover its history and how it came to be.</p>
+  <div class="minibar-grid" id="minibarGrid"></div>
+</section>
+</div>
+
+<!-- CART PANEL -->
+<div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
+<div class="cart-panel" id="cartPanel">
+  <div class="cart-head"><h3>🛒 Your Order</h3><button class="cart-close" onclick="closeCart()">✕</button></div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-foot">
+    <div class="cart-total"><span class="ct-label">Total</span><span class="ct-val" id="cartTotal">₹0</span></div>
+    <button class="checkout-btn" onclick="goToCheckout()">Proceed to Billing →</button>
+  </div>
+</div>
+
+<!-- DRINK HISTORY MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal-box" id="modalBox">
+    <div class="modal-header-wrap">
+      <img id="modalImg" src="" alt="" class="modal-img"/>
+      <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    </div>
+    <div class="modal-content">
+      <div class="modal-cat" id="modalCat"></div>
+      <div class="modal-title" id="modalTitle"></div>
+      <div class="modal-origin" id="modalOrigin"></div>
+      <div class="modal-section-t">The History</div>
+      <div class="modal-history" id="modalHistory"></div>
+      <div class="modal-section-t">Key Ingredients</div>
+      <div class="modal-ingredients" id="modalIngredients"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const barDrinks = [
+  {id:1,name:"Old Fashioned",cat:"Whisky",desc:"Bourbon, bitters, sugar, orange peel. The quintessential gentleman's cocktail.",price:750,img:"https://images.unsplash.com/photo-1470337458703-46ad1756a187?auto=format&fit=crop&w=600&q=80"},
+  {id:2,name:"Classic Mojito",cat:"Cocktails",desc:"White rum, fresh mint, lime juice, soda. Refreshingly Cuban.",price:520,img:"https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&w=600&q=80"},
+  {id:3,name:"Aperol Spritz",cat:"Cocktails",desc:"Aperol, prosecco, soda water, orange slice. Italy's favourite aperitivo.",price:680,img:"https://images.unsplash.com/photo-1560512823-829485b8bf24?auto=format&fit=crop&w=600&q=80"},
+  {id:4,name:"Single Malt Scotch",cat:"Whisky",desc:"Premium 18-year aged Speyside single malt, served neat or on the rocks.",price:1200,img:"https://images.unsplash.com/photo-1527281400683-1aae777175f8?auto=format&fit=crop&w=600&q=80"},
+  {id:5,name:"Cabernet Sauvignon",cat:"Wine",desc:"Full-bodied red with dark cherry, cedar, and subtle tobacco notes.",price:890,img:"https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=600&q=80"},
+  {id:6,name:"Craft IPA",cat:"Beer",desc:"Hoppy, citrus-forward India Pale Ale from a local craft brewery.",price:380,img:"https://images.unsplash.com/photo-1608270586620-248524c67de9?auto=format&fit=crop&w=600&q=80"},
+  {id:7,name:"Espresso Martini",cat:"Cocktails",desc:"Vodka, fresh espresso, coffee liqueur. The cocktail that wakes you up.",price:720,img:"https://images.unsplash.com/photo-1574096079513-d8259312b785?auto=format&fit=crop&w=600&q=80"},
+  {id:8,name:"Negroni",cat:"Cocktails",desc:"Equal parts gin, Campari, and sweet vermouth. Bitter, bold, beautiful.",price:780,img:"https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=600&q=80"},
+  {id:9,name:"Mango Lassi",cat:"Non-Alcoholic",desc:"Chilled mango, yoghurt, cardamom, and a hint of saffron.",price:220,img:"https://images.unsplash.com/photo-1553361371-9b22f78e8b1d?auto=format&fit=crop&w=600&q=80"},
+  {id:10,name:"Virgin Mary",cat:"Mocktails",desc:"Tomato juice, lemon, tabasco, Worcestershire — all the flavour, none of the spirit.",price:280,img:"https://images.unsplash.com/photo-1622597467836-f3285f2131b8?auto=format&fit=crop&w=600&q=80"},
+  {id:11,name:"Chardonnay",cat:"Wine",desc:"Elegant white wine with notes of green apple, vanilla, and light oak.",price:820,img:"https://images.unsplash.com/photo-1568213816046-0ee1c42bd559?auto=format&fit=crop&w=600&q=80"},
+  {id:12,name:"Whisky Sour",cat:"Whisky",desc:"Bourbon, fresh lemon juice, simple syrup, egg white foam.",price:690,img:"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=600&q=80"},
+  {id:13,name:"Blue Lagoon",cat:"Mocktails",desc:"Blue curaçao syrup, lemon juice, soda. Vivid, tropical, refreshing.",price:260,img:"https://images.unsplash.com/photo-1609951651556-5334e2706168?auto=format&fit=crop&w=600&q=80"},
+  {id:14,name:"Heineken Draft",cat:"Beer",desc:"Classic Dutch lager. Clean, crisp, and ice cold on tap.",price:320,img:"https://images.unsplash.com/photo-1535958636474-b021ee887b13?auto=format&fit=crop&w=600&q=80"},
+  {id:15,name:"Elderflower Fizz",cat:"Non-Alcoholic",desc:"Elderflower cordial, cucumber, sparkling water, fresh mint.",price:240,img:"https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=600&q=80"},
+  {id:16,name:"Margarita",cat:"Cocktails",desc:"Tequila blanco, triple sec, fresh lime juice, salted rim.",price:650,img:"https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=600&q=80"},
+];
+
+const minibarDrinks = [
+  {id:"m1",name:"Jack Daniel's",cat:"Tennessee Whiskey",origin:"Lynchburg, Tennessee, USA",tags:["Charcoal Mellowed","Smoky","Sweet Oak"],img:"https://images.unsplash.com/photo-1527281400683-1aae777175f8?auto=format&fit=crop&w=700&q=80",history:"Jack Daniel's was born in 1875 when a young Jasper Newton 'Jack' Daniel registered his distillery in a hollow of Lynchburg, Tennessee — making it America's oldest registered distillery. Jack learned his craft from a Lutheran preacher and moonshiner named Felix Waggoner as a young boy. The whiskey's defining characteristic is the Lincoln County Process: every drop is slowly filtered through ten feet of sugar maple charcoal before entering the barrel, a step unique to Tennessee whiskey that sets it apart from Kentucky bourbon. After Jack's death in 1911, the distillery passed to his nephew Lem Motlow and survived Prohibition as a medicinal spirit supplier. Today it remains the world's best-selling American whiskey.",ingredients:["Corn Mash","Rye","Malted Barley","Iron-Free Cave Spring Water","Sugar Maple Charcoal"]},
+  {id:"m2",name:"Absolut Vodka",cat:"Premium Vodka",origin:"Åhus, Sweden",tags:["Smooth","Neutral","Wheat-based"],img:"https://images.unsplash.com/photo-1569529465841-dfecdab7503b?auto=format&fit=crop&w=700&q=80",history:"Absolut Vodka traces its roots to 1879, when Lars Olsson Smith introduced 'Absolut Rent Brännvin' — Absolute Pure Vodka — in Sweden. He pioneered the continuous distillation method, which produces a purer spirit than traditional pot stills. The iconic square bottle with no label (only a painted neck paper) was launched in 1979 and designed by Gunnar Broman. The bottle's shape was inspired by an antique Swedish medicine bottle found in an antique store in Stockholm. Today, every drop is produced exclusively in Åhus using winter wheat from a 30km radius of the distillery and pure water from the same deep well since 1879.",ingredients:["Winter Wheat","Deep-Well Water","Continuous Distillation","No Added Sugar"]},
+  {id:"m3",name:"Baileys Irish Cream",cat:"Irish Cream Liqueur",origin:"Dublin, Ireland",tags:["Creamy","Sweet","Chocolate"],img:"https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=700&q=80",history:"Baileys was invented in 1973 by a team at Gilbeys of Ireland, with David Gluckman often credited as the creative mind behind the concept. The challenge was audacious: combine fresh Irish cream with Irish whiskey into a shelf-stable liqueur. The secret breakthrough was an emulsification process using natural emulsifiers, allowing cream and alcohol to blend without refrigeration. Named after the fictional Baileys Bar on a Dublin street sign, it was an instant phenomenon. Within a year of launch it had become the biggest-selling liqueur in the world, a title it has held for decades.",ingredients:["Irish Whiskey","Fresh Irish Cream","Cocoa Extract","Vanilla","Caramel Color"]},
+  {id:"m4",name:"Tanqueray Gin",cat:"London Dry Gin",origin:"London, England",tags:["Juniper-forward","Botanical","Crisp"],img:"https://images.unsplash.com/photo-1566633806327-68e152aaf26d?auto=format&fit=crop&w=700&q=80",history:"Charles Tanqueray founded his distillery in Bloomsbury, London in 1830 at the age of just 20. Driven by an obsession with craft, he experimented relentlessly with botanical combinations until he developed a recipe so precise it has barely changed in nearly two centuries. During the London Blitz of WWII, bombing destroyed all but one of the Tanqueray stills. The red seal on the bottle remains unchanged since Victorian times. Tanqueray's recipe uses just four botanicals: juniper, coriander, angelica root, and liquorice.",ingredients:["Juniper Berries","Coriander Seed","Angelica Root","Liquorice Root","Neutral Grain Spirit"]},
+  {id:"m5",name:"Bacardi Rum",cat:"White Rum",origin:"Santiago de Cuba, Cuba",tags:["Light","Smooth","Tropical"],img:"https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&w=700&q=80",history:"Facundo Bacardí Massó founded his distillery in Santiago de Cuba on February 4, 1862, after purchasing a tin-roofed distillery — and the fruit bats living in its rafters, who became the brand's iconic symbol. Bacardí revolutionised rum production by filtering spirits through charcoal and using proprietary yeast strains. After the Cuban Revolution in 1960, the government seized the distillery, but the Bacardí family had wisely moved operations to Puerto Rico years earlier. The original yeast culture has been maintained and replicated for over 160 years.",ingredients:["Molasses","Water","Proprietary Yeast","Charcoal Filtration","Oak Aging"]},
+  {id:"m6",name:"Hennessy VSOP",cat:"Cognac",origin:"Cognac, France",tags:["Rich","Fruity","Aged"],img:"https://images.unsplash.com/photo-1574096079513-d8259312b785?auto=format&fit=crop&w=700&q=80",history:"Richard Hennessy established his house in 1765 in the Charente region of France. In 1817, a letter from the future King George IV requesting a 'Very Superior Old Pale' cognac gave birth to the VSOP classification. Cognac must be twice-distilled in copper pot stills and aged in Limousin oak barrels for at least four years to earn the VSOP designation. Each bottle blends up to 60 different eaux-de-vie, some aged up to 15 years.",ingredients:["Ugni Blanc Grapes","Copper Pot Distillation","Limousin Oak Aging","Blend of 60+ Eaux-de-vie"]},
+  {id:"s1",name:"Coca-Cola",cat:"Soft Drink",origin:"Atlanta, Georgia, USA",tags:["Carbonated","Cola","Iconic"],img:"https://images.unsplash.com/photo-1554866585-cd94860890b7?auto=format&fit=crop&w=700&q=80",history:"Coca-Cola was invented on May 8, 1886 by Dr. John Stith Pemberton, a pharmacist in Atlanta, Georgia. Originally marketed as a brain tonic, it was first sold at Jacob's Pharmacy for five cents a glass. Frank M. Robinson named the drink and penned the iconic Spencerian script logo. The secret formula — known as 'Merchandise 7X' — has been one of the world's most guarded trade secrets for over 135 years. Today, over 2 billion servings are consumed daily in more than 200 countries.",ingredients:["Carbonated Water","High-Fructose Corn Syrup","Caramel Color","Phosphoric Acid","Natural Flavors (Merchandise 7X)","Caffeine"]},
+  {id:"s2",name:"Pepsi",cat:"Soft Drink",origin:"New Bern, North Carolina, USA",tags:["Carbonated","Cola","Sweet"],img:"https://images.unsplash.com/photo-1629203432180-71e9b18d855a?auto=format&fit=crop&w=700&q=80",history:"Pepsi was created in 1893 by pharmacist Caleb Bradham, who originally called it 'Brad's Drink.' Renamed 'Pepsi-Cola' in 1898 — derived from the digestive enzyme pepsin and kola nuts. The 'Pepsi Challenge' of 1975 — a blind taste test where more participants preferred Pepsi — became a landmark marketing event that sparked the legendary Cola Wars.",ingredients:["Carbonated Water","High-Fructose Corn Syrup","Caramel Color","Phosphoric Acid","Natural Flavors","Citric Acid","Caffeine"]},
+  {id:"s3",name:"Sprite",cat:"Soft Drink",origin:"West Germany (Coca-Cola)",tags:["Lemon-Lime","Crisp","Caffeine-Free"],img:"https://images.unsplash.com/photo-1625772299848-391b6a87d7b3?auto=format&fit=crop&w=700&q=80",history:"Sprite was born in West Germany in 1959 as 'Fanta Klare Zitrone'. Coca-Cola introduced it to the US in 1961 as 'Sprite' to compete with 7UP. The brand grew by positioning itself against image advertising, famously telling consumers to 'obey your thirst.' It became the world's best-selling lemon-lime soda.",ingredients:["Carbonated Water","High-Fructose Corn Syrup","Citric Acid","Natural Lemon & Lime Flavors","Sodium Benzoate","Sodium Citrate"]},
+  {id:"s4",name:"Red Bull",cat:"Energy Drink",origin:"Austria & Thailand",tags:["Energy","Taurine","Caffeinated"],img:"https://images.unsplash.com/photo-1621939514649-280e2ee25f60?auto=format&fit=crop&w=700&q=80",history:"Red Bull was inspired by a Thai energy drink called 'Krating Daeng.' Austrian entrepreneur Dietrich Mateschitz discovered it in 1982 when he noticed it cured his jet lag. He adapted the formula for Western tastes and launched Red Bull in Austria in 1987. Red Bull invented the energy drink category, pioneering extreme sports sponsorship and a lifestyle marketing model that has never been equalled. It now sells over 12 billion cans annually.",ingredients:["Carbonated Water","Sucrose","Glucose","Taurine","B-Group Vitamins","Caffeine (80mg per can)","Alpine Spring Water"]},
+  {id:"s5",name:"Tonic Water",cat:"Mixer",origin:"British India",tags:["Bitter","Quinine","Carbonated"],img:"https://images.unsplash.com/photo-1559181567-c3190bac6255?auto=format&fit=crop&w=700&q=80",history:"Tonic water's origins lie in 19th-century British India, where quinine — extracted from cinchona bark — was the only known treatment for malaria. British soldiers mixed it with sugar, lime, and gin to mask the bitterness — inadvertently creating the legendary Gin & Tonic. By the 1850s, Erasmus Bond had developed the first commercial tonic water, and Schweppes commercialised it widely.",ingredients:["Carbonated Water","Sugar","Quinine (from Cinchona Bark)","Citric Acid","Natural Flavors","Sodium Benzoate"]},
+  {id:"s6",name:"Minute Maid Orange",cat:"Juice",origin:"Florida, USA",tags:["Fresh","Citrus","Vitamin C"],img:"https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?auto=format&fit=crop&w=700&q=80",history:"Minute Maid was born from a wartime innovation. In 1945, the Florida Food Products research team developed a method to concentrate and freeze orange juice while preserving its fresh flavour — initially to provide Vitamin C to American troops in WWII. The brand launched in 1946 and Coca-Cola acquired it in 1960, making it the company's first acquisition outside carbonated soft drinks.",ingredients:["100% Orange Juice","Vitamin C (Ascorbic Acid)","Vitamin D","Calcium (in some variants)","No Added Sugar","No Preservatives"]},
+];
+
+let cart = [];
+let currentFilter = 'all';
+let selectedPayMethod = 'room';
+
+function getTotal(){ return cart.reduce((s,i)=>s+i.price*i.qty,0); }
+function updateCartCount(){ document.getElementById('cartCount').textContent=cart.reduce((s,i)=>s+i.qty,0); }
+
+function addToCart(drink, btn){
+  const existing = cart.find(i=>i.id===drink.id);
+  if(existing){ existing.qty++; } else { cart.push({...drink, qty:1}); }
+  updateCartCount();
+  btn.textContent='Added ✓'; btn.classList.add('added');
+  setTimeout(()=>{ btn.textContent='Add to Cart'; btn.classList.remove('added'); },1000);
+}
+
+function renderDrinks(cat){
+  const grid = document.getElementById('drinksGrid');
+  const filtered = cat==='all' ? barDrinks : barDrinks.filter(d=>d.cat===cat);
+  grid.innerHTML = filtered.map(d=>`
+    <div class="drink-card">
+      <img class="drink-img" src="${d.img}" alt="${d.name}" loading="lazy"/>
+      <div class="drink-info">
+        <div class="drink-cat">${d.cat}</div>
+        <div class="drink-name">${d.name}</div>
+        <div class="drink-desc">${d.desc}</div>
+        <div class="drink-footer">
+          <span class="drink-price">₹${d.price}</span>
+          <button class="add-btn" onclick="addToCart(barDrinks.find(x=>x.id===${d.id}),this)">Add to Cart</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+document.getElementById('filterRow').addEventListener('click',function(e){
+  const tab=e.target.closest('.filter-tab'); if(!tab)return;
+  document.querySelectorAll('#filterRow .filter-tab').forEach(t=>t.classList.remove('active'));
+  tab.classList.add('active'); currentFilter=tab.dataset.cat; renderDrinks(currentFilter);
+});
+
+const softCats=['Soft Drink','Energy Drink','Mixer','Juice'];
+function renderMinibar(filter){
+  filter=filter||'all';
+  const grid=document.getElementById('minibarGrid');
+  let list=minibarDrinks;
+  if(filter==='soft') list=minibarDrinks.filter(d=>softCats.includes(d.cat));
+  else if(filter==='spirits') list=minibarDrinks.filter(d=>!softCats.includes(d.cat));
+  grid.innerHTML=list.map(d=>`
+    <div class="mb-card" onclick="openModal('${d.id}')">
+      <div class="mb-img-wrap">
+        <img src="${d.img}" alt="${d.name}" loading="lazy"/>
+        <div class="mb-badge">${d.cat}</div>
+      </div>
+      <div class="mb-info">
+        <div class="mb-name">${d.name}</div>
+        <div class="mb-origin">📍 ${d.origin}</div>
+        <div class="mb-tags">${d.tags.map(t=>`<span class="mb-tag">${t}</span>`).join('')}</div>
+        <div class="mb-cta">Discover its history <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+      </div>
+    </div>`).join('');
+}
+
+document.getElementById('minibarFilterRow').addEventListener('click',function(e){
+  const tab=e.target.closest('.filter-tab'); if(!tab)return;
+  document.querySelectorAll('#minibarFilterRow .filter-tab').forEach(t=>t.classList.remove('active'));
+  tab.classList.add('active'); renderMinibar(tab.dataset.mcat);
+});
+
+function openModal(id){
+  const d=minibarDrinks.find(m=>m.id===id); if(!d)return;
+  document.getElementById('modalImg').src=d.img;
+  document.getElementById('modalImg').alt=d.name;
+  document.getElementById('modalCat').textContent=d.cat;
+  document.getElementById('modalTitle').textContent=d.name;
+  document.getElementById('modalOrigin').textContent='📍 '+d.origin;
+  document.getElementById('modalHistory').textContent=d.history;
+  document.getElementById('modalIngredients').innerHTML=d.ingredients.map(i=>`<span class="modal-ing">${i}</span>`).join('');
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeModal(e){ if(e.target===document.getElementById('modalOverlay')) closeModalDirect(); }
+function closeModalDirect(){ document.getElementById('modalOverlay').classList.remove('open'); document.body.style.overflow=''; }
+
+function openCart(){ renderCart(); document.getElementById('cartOverlay').classList.add('open'); document.getElementById('cartPanel').classList.add('open'); document.body.style.overflow='hidden'; }
+function closeCart(){ document.getElementById('cartOverlay').classList.remove('open'); document.getElementById('cartPanel').classList.remove('open'); document.body.style.overflow=''; }
+
+function renderCart(){
+  const items=document.getElementById('cartItems');
+  if(cart.length===0){ items.innerHTML='<div class="cart-empty"><span>🍹</span>Your cart is empty.<br/>Browse the bar to add drinks.</div>'; }
+  else { items.innerHTML=cart.map(i=>`
+    <div class="cart-item">
+      <img class="ci-img" src="${i.img}" alt="${i.name}"/>
+      <div class="ci-info">
+        <div class="ci-name">${i.name}</div>
+        <div class="ci-price">₹${i.price*i.qty}</div>
+        <div class="ci-qty">
+          <button class="qty-btn" onclick="changeQty(${i.id},-1)">−</button>
+          <span class="qty-val">${i.qty}</span>
+          <button class="qty-btn" onclick="changeQty(${i.id},1)">+</button>
+        </div>
+      </div>
+      <button class="ci-remove" onclick="removeFromCart(${i.id})">🗑</button>
+    </div>`).join(''); }
+  document.getElementById('cartTotal').textContent='₹'+getTotal().toLocaleString('en-IN');
+}
+
+function changeQty(id,delta){
+  const item=cart.find(i=>i.id===id); if(!item)return;
+  item.qty+=delta; if(item.qty<=0) cart=cart.filter(i=>i.id!==id);
+  updateCartCount(); renderCart();
+}
+function removeFromCart(id){ cart=cart.filter(i=>i.id!==id); updateCartCount(); renderCart(); }
+function goToCheckout(){ if(cart.length===0){ alert('Please add some drinks first!'); return; } closeCart(); showPage('billing'); }
+
+function renderSummary(){
+  const items=document.getElementById('summaryItems');
+  const totals=document.getElementById('summaryTotals');
+  if(!items||!totals)return;
+  items.innerHTML=cart.map(i=>`
+    <div class="summary-item">
+      <img class="si-img" src="${i.img}" alt="${i.name}"/>
+      <div class="si-info"><div class="si-name">${i.name}</div><div class="si-qty">Qty: ${i.qty}</div></div>
+      <div class="si-price">₹${(i.price*i.qty).toLocaleString('en-IN')}</div>
+    </div>`).join('');
+  const subtotal=getTotal(), tax=Math.round(subtotal*0.18), grand=subtotal+tax;
+  totals.innerHTML=`
+    <div class="strow"><span>Subtotal</span><span>₹${subtotal.toLocaleString('en-IN')}</span></div>
+    <div class="strow"><span>GST (18%)</span><span>₹${tax.toLocaleString('en-IN')}</span></div>
+    <div class="strow total"><span>Total</span><span>₹${grand.toLocaleString('en-IN')}</span></div>`;
+}
+
+document.getElementById('payMethods').addEventListener('click',function(e){
+  const btn=e.target.closest('.pay-m'); if(!btn)return;
+  document.querySelectorAll('.pay-m').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected'); selectedPayMethod=btn.dataset.method;
+});
+
+function placeOrder(){
+  document.getElementById('billingForm').style.display='none';
+  document.getElementById('orderSuccess').classList.add('show');
+  cart=[]; updateCartCount();
+}
+
+function showPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  document.querySelectorAll('.nav-links a[id^="nav-"]').forEach(a=>a.classList.remove('nav-active'));
+  const navEl=document.getElementById('nav-'+name); if(navEl) navEl.classList.add('nav-active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(name==='billing'){ renderSummary(); document.getElementById('billingForm').style.display=''; document.getElementById('orderSuccess').classList.remove('show'); }
+}
+
+(function init(){
+  var c=document.getElementById('ptcls');
+  if(c){for(var i=0;i<22;i++){var p=document.createElement('div');p.className='p';p.style.cssText='left:'+Math.random()*100+'%;animation-duration:'+(Math.random()*12+7)+'s;animation-delay:'+(-Math.random()*12)+'s';c.appendChild(p);}}
+  window.addEventListener('load',function(){
+    var hb=document.getElementById('heroBg'); if(hb)hb.classList.add('on');
+    var si=document.getElementById('stripImg'),sw=document.getElementById('stripWrap');
+    if(si){var src=si.getAttribute('data-src');if(src){var t=new Image();t.onload=function(){si.src=src;si.classList.add('visible');if(sw)sw.classList.add('loaded');};t.src=src;}}
+  });
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)e.target.classList.add('visible')});},{threshold:0.12});
+  document.querySelectorAll('.reveal').forEach(function(r){io.observe(r)});
+  window.addEventListener('scroll',function(){ document.getElementById('navbar').style.background=window.scrollY>60?'rgba(8,15,26,0.98)':'rgba(8,15,26,0.9)'; },{passive:true});
+  renderDrinks('all');
+  renderMinibar();
+})();
+</script>
+</body>
+</html>
