@@ -1,0 +1,169 @@
+/* CSS Design System for Smart Sense Hotel Bar & Mini Bar Navigation */
+
+:root {
+  /* Harmonious Color Palette */
+  --bg-primary: #0b0f19;
+  --bg-secondary: #121826;
+  --bg-card: rgba(22, 28, 45, 0.7);
+  --bg-card-hover: rgba(30, 41, 67, 0.85);
+  
+  --accent-gold: #c5a880;
+  --accent-gold-hover: #b3946a;
+  --accent-glow: rgba(197, 168, 128, 0.2);
+  
+  --text-primary: #f3f4f6;
+  --text-secondary: #9ca3af;
+  --text-muted: #6b7280;
+  
+  /* Status Colors */
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-info: #3b82f6;
+  
+  /* Borders and Shadows */
+  --border-glow: rgba(197, 168, 128, 0.15);
+  --border-light: rgba(255, 255, 255, 0.08);
+  --shadow-luxury: 0 10px 30px -10px rgba(0, 0, 0, 0.7), 0 1px 1px rgba(197, 168, 128, 0.05);
+  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Reset & Base Rules */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
+  overflow-x: hidden;
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(197, 168, 128, 0.05) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.03) 0%, transparent 50%);
+  background-attachment: fixed;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
+/* Accessibility Focus Outline */
+*:focus-visible {
+  outline: 2px solid var(--accent-gold);
+  outline-offset: 4px;
+}
+
+/* Skip link styling */
+.skip-link:focus {
+  top: 10px !important;
+}
+
+/* Scrollbar Engineering */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(197, 168, 128, 0.2);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-gold);
+}
+
+/* Glassmorphism Classes */
+.glass-panel {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  box-shadow: var(--shadow-luxury);
+}
+
+.luxury-border {
+  border-image: linear-gradient(to right, var(--accent-gold), transparent) 1;
+}
+
+/* Base Layout Grids */
+.layout-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Micro-animations */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 5px var(--accent-glow);
+    border-color: rgba(197, 168, 128, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 15px var(--accent-glow), 0 0 30px rgba(197, 168, 128, 0.1);
+    border-color: var(--accent-gold);
+  }
+}
+
+@keyframes live-dot {
+  0% { transform: scale(0.85); opacity: 0.5; }
+  50% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(0.85); opacity: 0.5; }
+}
+
+@keyframes slide-in {
+  from {
+    transform: translateY(12px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 3s infinite ease-in-out;
+}
+
+.animate-slide-in {
+  animation: slide-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.live-indicator {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background-color: var(--color-success);
+  border-radius: 50%;
+  margin-right: 8px;
+  animation: live-dot 1.5s infinite ease-in-out;
+  box-shadow: 0 0 8px var(--color-success);
+}
+
+.live-indicator.warning {
+  background-color: var(--color-warning);
+  box-shadow: 0 0 8px var(--color-warning);
+}
+
+.live-indicator.danger {
+  background-color: var(--color-error);
+  box-shadow: 0 0 8px var(--color-error);
+}
